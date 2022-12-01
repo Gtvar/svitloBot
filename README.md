@@ -19,7 +19,7 @@
 2. Створюємо для лямбди environments: 
  - HOSTNAME - куди стукаємо
  - BOT_TOKEN - токен бота
- - BOT_CHAT_ID - id бота
+ - BOT_CHAT_IDS - id Чата(можна парочку, треба розділити комою)
 3. Додаємо layer - https://stackoverflow.com/a/64462403. Бо у python в системних немає в бібліотеки requests.
 ![Layer](./screenshots/layer.png?raw=true "Layer")
 4. Додаємо параметр в AWS System Manager.

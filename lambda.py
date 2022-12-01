@@ -18,10 +18,10 @@ def send_request():
 def telegram_bot_sendtext(bot_message):
 
    bot_token = os.environ['BOT_TOKEN']
-   bot_chatID = os.environ['BOT_CHAT_ID']
-   send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
-
-   response = requests.get(send_text)
+   bot_chatIDS = [item for item in os.environ['BOT_CHAT_IDS'].split(",") if item]
+   for bot_chatID in bot_chatIDS:
+        send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+        response = requests.get(send_text)
 
    return response.json()
 
@@ -47,7 +47,9 @@ def get_text(result):
     if RESULT_YES == result:
         return 'Світло з\'явилося.😎 Слава Україні!🇺🇦'
     else:
+
         return 'Ой лишенько, світло зникло!🌃 Смерть москалям!😡'
+
 
 def lambda_handler(event, context):
     is_enabled = svitlo_is_enabled()
