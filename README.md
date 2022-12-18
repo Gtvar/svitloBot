@@ -15,12 +15,14 @@
 
 ## Налаштування Lambda 
 
-1. Створюемо лямбду, закидуємо туди код з lambda.py
-2. Створюємо для лямбди environments: 
+1. Створюемо головну лямбду, закидуємо туди код з lambda.py
+2. Створюемо лямбду котра шле в Telegram, закидуємо туди код з lambda.py
+3. Створюємо для лямбди environments: 
  - HOSTNAME - куди стукаємо
  - BOT_TOKEN - токен бота
  - BOT_CHAT_IDS - id Чата(можна парочку, треба розділити комою)
-3. Додаємо layer - https://stackoverflow.com/a/64462403. Бо у python в системних немає в бібліотеки requests.
+ - TELEGRAM_FUNCTION_NAME - ARN Функції для відсилки в Телеграм
+3. Додаємо layer - https://stackoverflow.com/a/64462403. Тому що у python в системних немає в бібліотеки requests.
 ![Layer](./screenshots/layer.png?raw=true "Layer")
 4. Додаємо параметр в AWS System Manager.
 ![Parameter](./screenshots/parameter.png?raw=true "Parameter")
@@ -30,7 +32,7 @@
    _YOUR_ACCOUNT_ можна подивитись на то що ругнулося, і знайти число.
 ![Role](./screenshots/role.png?raw=true "Role")
 
-Полісі:
+Полісі для доступа до параметрів:
 ```
 {
     "Version": "2012-10-17",
@@ -48,6 +50,22 @@
                 "ssm:PutParameter"
             ],
             "Resource": "arn:aws:ssm:us-east-1:_YOUR_ACCOUNT_:parameter/svitlo.is_enabled",
+            "Effect": "Allow"
+        }
+    ]
+}
+```
+
+Полісі для запуску іншої фунції
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "lambda:InvokeFunction"
+            ],
+            "Resource": "arn:aws:lambda:us-east-1:_YOUR_ACCOUNT_:function:sendToTelegram",
             "Effect": "Allow"
         }
     ]

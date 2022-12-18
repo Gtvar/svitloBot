@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 import boto3
 
@@ -17,13 +18,24 @@ def send_request():
 
 def telegram_bot_sendtext(bot_message):
 
-   bot_token = os.environ['BOT_TOKEN']
+   client = boto3.client('lambda')
+
    bot_chatIDS = [item for item in os.environ['BOT_CHAT_IDS'].split(",") if item]
    for bot_chatID in bot_chatIDS:
-        send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
-        response = requests.get(send_text)
+        inputParams = {
+            "botChatID": bot_chatID,
+            "botMessage": bot_message
+        }
 
-   return response.json()
+        response = client.invoke(
+            FunctionName = os.environ['TELEGRAM_FUNCTION_NAME'],
+            InvocationType = 'RequestResponse',
+            Payload = json.dumps(inputParams)
+        )
+
+        responseFromChild = json.load(response['Payload'])
+
+   return responseFromChild
 
 def svitlo_is_enabled():
     client = boto3.client('ssm')
